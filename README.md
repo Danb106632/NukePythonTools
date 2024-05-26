@@ -106,7 +106,8 @@ Some of these command have keybinds. They can all be used and accessed from the 
 <!-- ROADMAP -->
 ## Roadmap
 
-- [ ] Add option for NoOp's instead of PostageStamps
+- [ ] Add option for NoOp's instead of PostageStamps to speed up performance
+- [ ] Add support for other Read formats: 3D, Deep
 
 
 <!-- LICENSE -->
