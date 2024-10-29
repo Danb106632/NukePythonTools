@@ -40,7 +40,7 @@ def WriteRead():
 
         #get file range and set values
         for seq in nuke.getFileNameList(folder):
-            if seq.split()[0] == file:
+            if seq == file:
                 readNode = nuke.createNode('Read', inpanel=False)
                 readNode['file'].fromUserText(folder + seq)
 
@@ -104,7 +104,7 @@ def WriteReadReplace():
 
         #get file range and set values
         for seq in nuke.getFileNameList(folder):
-            if seq.split()[0] == file:
+            if seq == file:
                 readNode = nuke.createNode('Read', inpanel=False)
                 readNode['file'].fromUserText(folder + seq)
 
@@ -152,6 +152,8 @@ def PostageReplace():
     if postageName is None or postageName == '':
         return
     
+
+
     i = 0
     #Make sure that there will be no duplicate names
     for n in nuke.selectedNodes('Read'):
@@ -169,6 +171,8 @@ def PostageReplace():
                 return
         
             i += 1
+
+    nodename = "NoOp" if nuke.ask("Use NoOp?") else "PostageStamp"
 
     #Select By Class
     nuke.selectSimilar(0)
@@ -190,7 +194,7 @@ def PostageReplace():
             #Copy pos and set knobs
             xpos = int(n['xpos'].value())
             ypos = int(n['ypos'].value())
-            PS = nuke.createNode('PostageStamp', inpanel=False)
+            PS = nuke.createNode(nodename, inpanel=False)
             PS['xpos'].setValue(xpos)
             PS['ypos'].setValue(ypos)
             PS['hide_input'].setValue(True)
