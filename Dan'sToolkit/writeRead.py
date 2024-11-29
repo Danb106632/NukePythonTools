@@ -1,6 +1,7 @@
 import nuke
 import nukescripts
 import os
+import re
 from os.path import normpath
 from pathlib import PureWindowsPath
 
@@ -14,6 +15,7 @@ def WriteRead():
         file = ''
         relative = False
         OgFile = ''
+        sequence = False
 
         #Get Write Values
         xpos = int(n['xpos'].getValue())
@@ -40,6 +42,12 @@ def WriteRead():
 
         #get file range and set values
         for seq in nuke.getFileNameList(folder):
+            if file in seq:
+                split_seq = seq.rsplit(' ', 1)
+                if len(split_seq) == 2:
+                    if re.search('\d+-?\d+|\d+', split_seq[1]):
+                        sequence = True
+                        seq = split_seq[0]
             if seq == file:
                 readNode = nuke.createNode('Read', inpanel=False)
                 readNode['file'].fromUserText(folder + seq)
@@ -50,7 +58,22 @@ def WriteRead():
                 readNode['colorspace'].setValue(colorspace)
                 readNode['premultiplied'].setValue(premultiplied)
                 readNode['raw'].setValue(raw)
-
+                
+                if(sequence):
+                    if '-' in split_seq[1]:
+                        frame_range = split_seq[1].split('-')
+                    
+                        readNode['first'].setValue(int(frame_range[0]))
+                        readNode['last'].setValue(int(frame_range[1]))
+                        readNode['origfirst'].setValue(int(frame_range[0]))
+                        readNode['origlast'].setValue(int(frame_range[1]))
+                        
+                    else:
+                        readNode['first'].setValue(int(split_seq[1]))
+                        readNode['last'].setValue(int(split_seq[1]))
+                        readNode['origfirst'].setValue(int(split_seq[1]))
+                        readNode['origlast'].setValue(int(split_seq[1]))
+                                                      
                 #covert path back to relative - resets frame ranges
                 if relative:
                     first = int(readNode['first'].getValue())
@@ -78,6 +101,7 @@ def WriteReadReplace():
         file = ''
         relative = False
         OgFile = ''
+        sequence = False
 
         #Get Write Values
         xpos = int(n['xpos'].getValue())
@@ -104,17 +128,38 @@ def WriteReadReplace():
 
         #get file range and set values
         for seq in nuke.getFileNameList(folder):
+            if file in seq:
+                split_seq = seq.rsplit(' ', 1)
+                if len(split_seq) == 2:
+                    if re.search('\d+-?\d+|\d+', split_seq[1]):
+                        sequence = True
+                        seq = split_seq[0]
             if seq == file:
                 readNode = nuke.createNode('Read', inpanel=False)
                 readNode['file'].fromUserText(folder + seq)
 
 
                 readNode['xpos'].setValue(xpos)
-                readNode['ypos'].setValue(ypos)
+                readNode['ypos'].setValue(ypos+60)
                 readNode['colorspace'].setValue(colorspace)
                 readNode['premultiplied'].setValue(premultiplied)
                 readNode['raw'].setValue(raw)
-
+                
+                if(sequence):
+                    if '-' in split_seq[1]:
+                        frame_range = split_seq[1].split('-')
+                    
+                        readNode['first'].setValue(int(frame_range[0]))
+                        readNode['last'].setValue(int(frame_range[1]))
+                        readNode['origfirst'].setValue(int(frame_range[0]))
+                        readNode['origlast'].setValue(int(frame_range[1]))
+                        
+                    else:
+                        readNode['first'].setValue(int(split_seq[1]))
+                        readNode['last'].setValue(int(split_seq[1]))
+                        readNode['origfirst'].setValue(int(split_seq[1]))
+                        readNode['origlast'].setValue(int(split_seq[1]))
+                                                      
                 #covert path back to relative - resets frame ranges
                 if relative:
                     first = int(readNode['first'].getValue())
